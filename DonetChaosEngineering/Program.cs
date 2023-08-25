@@ -10,18 +10,27 @@ using Microsoft.Extensions.DependencyInjection;
 using DonetChaosEngineering.Service;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Define a retry policy for handling transient HTTP errors.
 static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
 {
     return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        .HandleTransientHttpError()  // Handle temporary HTTP errors.
+        .WaitAndRetryAsync(
+            3,  // Retry up to three times.
+            retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))  // Use exponential backoff for retry delay.
+        );
 }
 
+// Define a circuit breaker policy for handling consecutive transient HTTP errors.
 static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
 {
     return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .CircuitBreakerAsync(5, TimeSpan.FromMinutes(1));
+        .HandleTransientHttpError()  // Handle temporary HTTP errors.
+        .CircuitBreakerAsync(
+            5,  // Break the circuit after five consecutive failures.
+            TimeSpan.FromMinutes(1)  // Keep circuit open for 1 minute after breaking.
+        );
 }
 
 // Chaos policy
