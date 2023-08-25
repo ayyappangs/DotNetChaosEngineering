@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/DonetChaosEngineering/.vs/DonetChaosEngineering
+/DonetChaosEngineering/obj
+/DonetChaosEngineering/bin/Debug/net6.0
+*.editorconfig
